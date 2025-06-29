@@ -12,7 +12,14 @@ import createError from 'http-errors';
 export const getAllContacts = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
-  const contacts = await getAllService({ page, perPage, sortBy, sortOrder });
+  const userId = req.user._id;
+  const contacts = await getAllService({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    userId,
+  });
 
   res.status(200).json({
     status: 200,
@@ -23,7 +30,8 @@ export const getAllContacts = async (req, res) => {
 
 export const getContactById = async (req, res, next) => {
   const { contactId } = req.params;
-  const contact = await getByIdService(contactId);
+  const userId = req.user._id;
+  const contact = await getByIdService(contactId, userId);
 
   if (!contact) {
     throw createError(404, 'Contact not found');
@@ -46,12 +54,14 @@ export const createContact = async (req, res, next) => {
     );
   }
 
+  const userId = req.user._id;
   const newContact = await createContactService({
     name,
     phoneNumber,
     email,
     isFavourite,
     contactType,
+    userId,
   });
   res.status(201).json({
     status: 201,
@@ -63,8 +73,13 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
   const updateData = req.body;
+  const userId = req.user._id;
 
-  const updatedContact = await updateContactService(contactId, updateData);
+  const updatedContact = await updateContactService(
+    contactId,
+    updateData,
+    userId,
+  );
 
   if (!updatedContact) {
     throw createError(404, 'Contact not found');
@@ -79,7 +94,8 @@ export const updateContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await deleteContactService(contactId);
+  const userId = req.user._id;
+  const result = await deleteContactService(contactId, userId);
 
   if (!result) {
     throw createError(404, 'Contact not found');
