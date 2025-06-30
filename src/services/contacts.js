@@ -7,12 +7,13 @@ export const getAllContacts = async ({
   perPage = 10,
   sortBy = 'name',
   sortOrder = SORT_ORDER.ASC,
+  userId,
 } = {}) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const contactsQuery = ContactCollection.find();
-  const contactsCount = await ContactCollection.countDocuments(contactsQuery);
+  const contactsQuery = ContactCollection.find({ userId });
+  const contactsCount = await ContactCollection.countDocuments({ userId });
 
   const contacts = await contactsQuery
     .skip(skip)
@@ -28,26 +29,37 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = async (contactId) => {
-  const contact = await ContactCollection.findById(contactId);
+export const getContactById = async (contactId, userId) => {
+  const contact = await ContactCollection.findOne({ _id: contactId, userId });
   return contact;
 };
 
 export const createContact = async (contactData) => {
-  const newContact = await ContactCollection.create(contactData);
-  return newContact;
+  if (!contactData.userId) {
+    throw new Error('userId is missing in contact data');
+  }
+  try {
+    const newContact = await ContactCollection.create(contactData);
+    return newContact;
+  } catch (error) {
+    console.error('Validation error:', error.message);
+    throw error;
+  }
 };
 
-export const updateContact = async (contactId, updateData) => {
-  const updatedContact = await ContactCollection.findByIdAndUpdate(
-    contactId,
+export const updateContact = async (contactId, updateData, userId) => {
+  const updatedContact = await ContactCollection.findOneAndUpdate(
+    { _id: contactId, userId },
     updateData,
     { new: true, runValidators: true },
   );
   return updatedContact;
 };
 
-export const deleteContact = async (contactId) => {
-  const result = await ContactCollection.findByIdAndDelete(contactId);
+export const deleteContact = async (contactId, userId) => {
+  const result = await ContactCollection.findOneAndDelete({
+    _id: contactId,
+    userId,
+  });
   return result;
 };

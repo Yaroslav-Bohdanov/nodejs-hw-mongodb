@@ -55,14 +55,19 @@ export const createContact = async (req, res, next) => {
   }
 
   const userId = req.user._id;
-  const newContact = await createContactService({
+  if (!userId) {
+    throw createError(401, 'User ID is not available in request');
+  }
+  const contactData = {
     name,
     phoneNumber,
     email,
     isFavourite,
     contactType,
     userId,
-  });
+  };
+  const newContact = await createContactService(contactData);
+
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
