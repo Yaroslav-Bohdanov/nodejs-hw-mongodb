@@ -50,7 +50,7 @@ export const createContact = async (contactData) => {
 export const updateContact = async (contactId, updateData, userId) => {
   const updatedContact = await ContactCollection.findOneAndUpdate(
     { _id: contactId, userId },
-    updateData,
+    { $set: updateData },
     { new: true, runValidators: true },
   );
   return updatedContact;

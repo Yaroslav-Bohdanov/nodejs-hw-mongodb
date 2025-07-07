@@ -1,3 +1,6 @@
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import {
@@ -46,6 +49,7 @@ export const getContactById = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const photo = req.file;
 
   if (!name || !phoneNumber || !contactType) {
     throw createError(
@@ -58,6 +62,16 @@ export const createContact = async (req, res, next) => {
   if (!userId) {
     throw createError(401, 'User ID is not available in request');
   }
+
+  let photoUrl;
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
   const contactData = {
     name,
     phoneNumber,
@@ -65,6 +79,7 @@ export const createContact = async (req, res, next) => {
     isFavourite,
     contactType,
     userId,
+    photo: photoUrl,
   };
   const newContact = await createContactService(contactData);
 
@@ -77,8 +92,28 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const updateData = req.body;
+  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const photo = req.file;
+
   const userId = req.user._id;
+
+  let photoUrl = req.body.photo; // Зберігаємо старе фото, якщо нове не завантажено
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  const updateData = {
+    name,
+    phoneNumber,
+    email,
+    isFavourite,
+    contactType,
+    photo: photoUrl,
+  };
 
   const updatedContact = await updateContactService(
     contactId,
