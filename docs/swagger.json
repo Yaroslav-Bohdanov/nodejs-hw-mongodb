@@ -2,12 +2,12 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "Contacts app",
+    "title": "Contacts App",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "This is a documentation of contacts app"
+    "description": "This is a documentation of Contacts App"
   },
   "servers": [
     {
@@ -21,10 +21,6 @@
     {
       "name": "Contacts",
       "description": "Operations about contacts."
-    },
-    {
-      "name": "Auth",
-      "description": "Auth operations."
     }
   ],
   "paths": {
@@ -35,7 +31,7 @@
         ],
         "summary": "Get list of contacts",
         "operationId": "getContacts",
-        "description": "Retrieve a list of contacts with optional filters",
+        "description": "Get list of contacts with this endpoint",
         "security": [
           {
             "bearerAuth": []
@@ -46,26 +42,26 @@
             "in": "query",
             "name": "page",
             "schema": {
-              "type": "integer",
-              "example": 1
-            }
+              "type": "integer"
+            },
+            "example": 1
           },
           {
             "in": "query",
             "name": "perPage",
             "schema": {
-              "type": "integer",
-              "example": 10
-            }
+              "type": "integer"
+            },
+            "example": 10
           },
           {
             "in": "query",
             "name": "sortBy",
             "schema": {
-              "type": "string",
-              "example": "name"
+              "type": "string"
             },
-            "description": "Fields to sort by, default is _id"
+            "example": "name",
+            "description": "All contact's fields can be mentioned. Default value - name"
           },
           {
             "in": "query",
@@ -75,14 +71,14 @@
               "enum": [
                 "asc",
                 "desc"
-              ],
-              "example": "asc"
-            }
+              ]
+            },
+            "example": "asc"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved list of contacts",
+            "description": "Successfully found contacts!",
             "content": {
               "application/json": {
                 "schema": {
@@ -343,6 +339,40 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Contact with id 65ca67e7ae7f10c88b598384 not found!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "No contact found with the provided ID"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },

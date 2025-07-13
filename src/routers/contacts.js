@@ -26,12 +26,20 @@ router.post(
   upload.single('photo'),
   validateBody(addContactSchema),
   ctrlWrapper(createContact),
+  (req, res, next) => {
+    console.log('POST /contacts completed');
+    next();
+  },
 );
 router.delete(
   '/:contactId',
   authenticate,
   isValidId,
   ctrlWrapper(deleteContact),
+  (req, res, next) => {
+    console.log('DELETE /contacts/:contactId completed');
+    next();
+  },
 );
 router.patch(
   '/:contactId',
@@ -40,6 +48,10 @@ router.patch(
   upload.single('photo'),
   validateBody(updateContactSchema),
   ctrlWrapper(updateContact),
+  (req, res, next) => {
+    console.log('PATCH /contacts/:contactId completed');
+    next();
+  },
 );
 
 export default router;

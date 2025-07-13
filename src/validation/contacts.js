@@ -3,7 +3,7 @@ import { isValidObjectId } from 'mongoose';
 
 export const addContactSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
-  phone: Joi.string().required(),
+  phoneNumber: Joi.string().required(),
   email: Joi.string().email().required(),
   isFavourite: Joi.boolean(),
   contactType: Joi.string().valid('work', 'personal').required(),
@@ -16,13 +16,21 @@ export const addContactSchema = Joi.object({
     })
     .optional(),
   photo: Joi.any().optional(),
+}).custom((value, helpers) => {
+  console.log('Validating addContactSchema:', value);
+  return value;
 });
 
 export const updateContactSchema = Joi.object({
   name: Joi.string().min(3).max(30),
-  phone: Joi.string(),
+  phoneNumber: Joi.string(),
   email: Joi.string().email(),
   isFavourite: Joi.boolean(),
   contactType: Joi.string().valid('work', 'personal'),
   photo: Joi.any().optional(),
-}).min(1);
+})
+  .min(1)
+  .custom((value, helpers) => {
+    console.log('Validating updateContactSchema:', value);
+    return value;
+  });
