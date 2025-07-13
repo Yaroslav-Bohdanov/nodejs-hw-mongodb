@@ -19,9 +19,7 @@ import { upload } from '../middlewares/multer.js';
 const router = Router();
 
 router.get('/', authenticate, ctrlWrapper(getAllContacts));
-
 router.get('/:contactId', authenticate, isValidId, ctrlWrapper(getContactById));
-
 router.post(
   '/',
   authenticate,
@@ -29,14 +27,12 @@ router.post(
   validateBody(addContactSchema),
   ctrlWrapper(createContact),
 );
-
 router.delete(
   '/:contactId',
   authenticate,
   isValidId,
   ctrlWrapper(deleteContact),
 );
-
 router.patch(
   '/:contactId',
   authenticate,

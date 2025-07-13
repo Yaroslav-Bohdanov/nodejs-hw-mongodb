@@ -27,7 +27,15 @@ export const getAllContacts = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
-    data: contacts,
+    data: {
+      data: contacts,
+      page,
+      perPage,
+      totalItems: contacts.length,
+      totalPages: Math.ceil(contacts.length / perPage),
+      hasNextPage: page < Math.ceil(contacts.length / perPage),
+      hasPreviousPage: page > 1,
+    },
   });
 };
 
@@ -48,13 +56,13 @@ export const getContactById = async (req, res, next) => {
 };
 
 export const createContact = async (req, res, next) => {
-  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const { name, phone, email, isFavourite, contactType } = req.body;
   const photo = req.file;
 
-  if (!name || !phoneNumber || !contactType) {
+  if (!name || !phone || !contactType) {
     throw createError(
       400,
-      'Missing required fields: name, phoneNumber, and contactType are required',
+      'Missing required fields: name, phone, and contactType are required',
     );
   }
 
@@ -63,7 +71,7 @@ export const createContact = async (req, res, next) => {
     throw createError(401, 'User ID is not available in request');
   }
 
-  let photoUrl;
+  let photoUrl = null;
   if (photo) {
     if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
       photoUrl = await saveFileToCloudinary(photo);
@@ -74,7 +82,7 @@ export const createContact = async (req, res, next) => {
 
   const contactData = {
     name,
-    phoneNumber,
+    phone,
     email,
     isFavourite,
     contactType,
@@ -92,12 +100,12 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const { name, phone, email, isFavourite, contactType } = req.body;
   const photo = req.file;
 
   const userId = req.user._id;
 
-  let photoUrl = req.body.photo; // Зберігаємо старе фото, якщо нове не завантажено
+  let photoUrl = null;
   if (photo) {
     if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
       photoUrl = await saveFileToCloudinary(photo);
@@ -108,7 +116,7 @@ export const updateContact = async (req, res, next) => {
 
   const updateData = {
     name,
-    phoneNumber,
+    phone,
     email,
     isFavourite,
     contactType,
@@ -127,7 +135,7 @@ export const updateContact = async (req, res, next) => {
 
   res.status(200).json({
     status: 200,
-    message: 'Successfully patched a contact!',
+    message: `Successfully updated contact with id ${contactId}!`,
     data: updatedContact,
   });
 };

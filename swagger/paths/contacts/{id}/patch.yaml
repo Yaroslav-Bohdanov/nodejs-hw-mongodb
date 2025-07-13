@@ -2,7 +2,7 @@ tags:
   - Contacts
 summary: Update contact by ID
 operationId: updateContact
-description: Update contact details by its unique ID
+description: 'Update contact details by its unique ID with optional photo'
 security:
   - bearerAuth: []
 parameters:
@@ -14,19 +14,35 @@ parameters:
       example: '65ca67e7ae7f10c88b598384'
 requestBody:
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         properties:
           name:
+            description: "Contact's name"
             type: string
             example: 'Jane Doe'
-          email:
-            type: string
-            example: 'jane.doe@example.com'
           phone:
+            description: "Contact's phone number"
             type: string
             example: '+380981234567'
+          email:
+            description: "Contact's email"
+            type: string
+            example: 'jane.doe@example.com'
+          isFavourite:
+            description: 'Whether is contact favourite'
+            type: boolean
+            example: true
+          contactType:
+            description: "Contact's type"
+            type: string
+            enum: ['work', 'personal']
+            example: 'personal'
+          photo:
+            description: "Contact's photo"
+            type: string
+            format: binary
         required:
           - name
 responses:

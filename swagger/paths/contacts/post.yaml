@@ -1,32 +1,48 @@
 tags:
   - Contacts
-summary: Create a new contact
+summary: Create contact
 operationId: createContact
-description: Create a new contact with the provided data
+description: 'Create a contact with payload'
 security:
   - bearerAuth: []
 requestBody:
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         required:
           - name
-          - email
           - phone
+          - contactType
         properties:
           name:
+            description: "Contact's name"
             type: string
             example: 'John Doe'
-          email:
-            type: string
-            example: 'john.doe@example.com'
           phone:
+            description: "Contact's phone number"
             type: string
             example: '+380981234567'
+          email:
+            description: "Contact's email"
+            type: string
+            example: 'john.doe@example.com'
+          isFavourite:
+            description: 'Whether is contact favourite'
+            type: boolean
+            example: false
+          contactType:
+            description: "Contact's type"
+            type: string
+            enum: ['work', 'personal']
+            example: 'work'
+          photo:
+            description: "Contact's photo"
+            type: string
+            format: binary
 responses:
   '201':
-    description: Successfully created contact
+    description: Creates a contact
     content:
       application/json:
         schema:
@@ -41,7 +57,7 @@ responses:
               example: 201
             message:
               type: string
-              example: Successfully created a new contact!
+              example: Successfully created a contact!
             data:
               type: object
               $ref: '../../components/schemas/contact.yaml'
@@ -67,6 +83,6 @@ responses:
               properties:
                 message:
                   type: string
-                  example: 'Name, email, and phone are required'
+                  example: 'Name, phone, and contactType are required'
   '401':
     $ref: '../../components/responses/401.yaml'
