@@ -12,14 +12,14 @@ requestBody:
         type: object
         required:
           - name
-          - phone
+          - phoneNumber
           - contactType
         properties:
           name:
             description: "Contact's name"
             type: string
             example: 'John Doe'
-          phone:
+          phoneNumber:
             description: "Contact's phone number"
             type: string
             example: '+380981234567'
@@ -83,6 +83,6 @@ responses:
               properties:
                 message:
                   type: string
-                  example: 'Name, phone, and contactType are required'
+                  example: 'Name, phoneNumber, and contactType are required'
   '401':
     $ref: '../../components/responses/401.yaml'

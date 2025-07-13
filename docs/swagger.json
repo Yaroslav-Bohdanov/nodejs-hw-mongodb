@@ -170,7 +170,7 @@
                 "type": "object",
                 "required": [
                   "name",
-                  "phone",
+                  "phoneNumber",
                   "contactType"
                 ],
                 "properties": {
@@ -179,7 +179,7 @@
                     "type": "string",
                     "example": "John Doe"
                   },
-                  "phone": {
+                  "phoneNumber": {
                     "description": "Contact's phone number",
                     "type": "string",
                     "example": "+380981234567"
@@ -268,7 +268,7 @@
                       "properties": {
                         "message": {
                           "type": "string",
-                          "example": "Name, phone, and contactType are required"
+                          "example": "Name, phoneNumber, and contactType are required"
                         }
                       }
                     }
@@ -410,7 +410,7 @@
                     "type": "string",
                     "example": "Jane Doe"
                   },
-                  "phone": {
+                  "phoneNumber": {
                     "description": "Contact's phone number",
                     "type": "string",
                     "example": "+380981234567"
